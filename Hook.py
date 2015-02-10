@@ -60,6 +60,9 @@ def handle_keyboard_all(event):
     #     event.KeyID = 1000
     # TODO: was buggy, needs to be fixed sometimes
 
+    if event.KeyID == 0xE7:
+        return True
+
     # check if the received key event was triggered by the program
     if (event.KeyID, key_down) in triggered_keys:
         triggered_keys.remove((event.KeyID, key_down))

@@ -50,10 +50,10 @@ class VirtualKey(object):
         return hex(self.id)
 
 
-class UnicodeKey(object):
+class SimpleUnicodeKey(object):
     def __init__(self, i):
         if isinstance(i, int):
-            if 0 <= i <= 2**8-1:
+            if 0 <= i <= 2**16-1:
                 self.id = i
             else:
                 raise AttributeError('Integer {} ({}) is not a valid unicode key ID.'.format(i, hex(i)))
@@ -62,7 +62,7 @@ class UnicodeKey(object):
                 raise AttributeError('String {} is too long or too short.'.format(i))
 
             i = ord(i)
-            if 0 <= i <= 2**8-1:
+            if 0 <= i <= 2**16-1:
                 self.id = i
             else:
                 raise AttributeError('Integer {} ({}) is not a valid unicode key ID.'.format(i, hex(i)))

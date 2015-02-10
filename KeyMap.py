@@ -2,7 +2,7 @@ import Queue
 import Constants
 import Hook
 import Send
-from Key import SimpleKey, SimpleModifier, ComplexKey
+from Key import SimpleKey, SimpleModifier, ComplexKey, SimpleUnicodeKey
 import time
 
 __author__ = 'Felix'
@@ -22,6 +22,14 @@ def release_key(vKey_id):
     Send.release_key(vKey_id)
     print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
 
+def release_unicode_key(unicode_id):
+    #TODO: implement
+    Send.release_key_u(unicode_id)
+    pass
+
+def press_unicode_key(unicode_id):
+    Send.press_key_u(unicode_id)
+    pass
 
 def type_key(vKey_id):
     print('---Typed {}'.format(vKey_id))
@@ -31,6 +39,8 @@ def type_key(vKey_id):
 def repress_key(vKey_id):
     Hook.triggered_keys.append((vKey_id, True))
     Send.press_key(vKey_id)
+
+#TODO: implement repress of unicode-keys
 
 
 class KeyMap(object):
@@ -75,6 +85,7 @@ class KeyMap(object):
 
                     # type the key associated with the ComplexKey
                     type_key(int(action.vKeyName))
+                    #TODO: what about unicode here?
 
                     # remove the ComplexKey from the list of delayed_keys
                     self.delayed_keys.pop(0)
@@ -118,6 +129,9 @@ class KeyMap(object):
                     if isinstance(action, SimpleKey):
                         del self.physically_pressed_keys[int(action.vKeyName)]
                         release_key(int(action.vKeyName))
+                    elif isinstance(action, SimpleUnicodeKey):
+                        del self.physically_pressed_keys[int(action.vKeyName)]
+                        release_unicode_key(action.id)
                     else:
                         self.release_layer()
             return
@@ -141,6 +155,8 @@ class KeyMap(object):
         #print('performing action')
         if isinstance(action, SimpleKey):
             self.process_SimpleKey(action, key_down)
+        elif isinstance(action, SimpleUnicodeKey):
+            self.process_SimpleUnicodeKey(action, key_down)
         elif isinstance(action, SimpleModifier):
             self.process_SimpleMod(action, key_down)
         elif isinstance(action, ComplexKey):
@@ -160,6 +176,9 @@ class KeyMap(object):
             elif isinstance(action, SimpleKey):
                 self.physically_pressed_keys[key] = action
                 self.process_SimpleKey(action, True)
+            elif isinstance(action, SimpleUnicodeKey):
+                self.physically_pressed_keys[key] = action
+                self.process_SimpleUnicodeKey(action, True)
             elif isinstance(action, SimpleModifier):
                 self.physically_pressed_keys[key] = action
                 self.process_SimpleMod(action, True)
@@ -184,6 +203,14 @@ class KeyMap(object):
         else:
             print('Key {} up'.format(action.vKeyName))
             release_key(int(action.vKeyName))
+
+    def process_SimpleUnicodeKey(self, action, key_down):
+        if key_down:
+            print('UnicodeKey {} down'.format(action.id))
+            press_unicode_key(action.id)
+        else:
+            print('UnicodeKey {} up'.format(action.id))
+            release_unicode_key(action.id)
 
     def process_SimpleMod(self, action, key_down):
         if key_down:

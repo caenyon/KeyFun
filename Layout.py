@@ -2,7 +2,7 @@ import Constants
 
 __author__ = 'Felix'
 
-from Key import SimpleKey, SimpleModifier, ComplexKey, VirtualKey
+from Key import SimpleKey, SimpleModifier, ComplexKey, VirtualKey, SimpleUnicodeKey
 
 
 class Layer(object):
@@ -20,6 +20,10 @@ class Layer(object):
 
     def add_SimpleKey(self, vKey_physical, vKey_target):
         self.layerDict[int(vKey_physical)] = SimpleKey(vKey_target)
+
+    def add_SimpleUnicodeKey(self, vKey_physical, unicode_key):
+        self.layerDict[int(vKey_physical)] = SimpleUnicodeKey(unicode_key)
+
 
     def add_SimpleMod(self, vKey_physical, layer_target):
         self.layerDict[int(vKey_physical)] = SimpleModifier(layer_target)

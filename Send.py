@@ -78,9 +78,5 @@ def get_scan_code(vkey_code):
 
 if __name__ == '__main__':
 
-    import time
-    time.sleep(2)
-    scroll_up(120)
-    for i in range(100):
-        time.sleep(.05)
-        scroll_up(10)
+    press_key_u(0x20AC)
+    release_key_u(0x20AC)
