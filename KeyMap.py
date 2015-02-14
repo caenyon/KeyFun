@@ -10,16 +10,38 @@ __author__ = 'Felix'
 pressed_keys = set()
 
 def press_key(vKey_id):
+    if vKey_id == 0xA5:
+        # The AltGR-Key. The left control key has to be pressed additionally.
+        press_key(0xA2)
+
     pressed_keys.add(vKey_id)
     Hook.triggered_keys.append((vKey_id, True))
-    Send.press_key(vKey_id)
+    if vKey_id == 0x88:
+        # The Numpad Enter key
+        Send.press_key(0x0D, 1)
+    elif vKey_id in (1, 2, 4, 5, 6):
+        Send.press_mouse_key(vKey_id)
+    else:
+        Send.press_key(vKey_id)
     print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
 
 
 def release_key(vKey_id):
+
+
+    if vKey_id == 0xA5:
+        # The AltGR-Key. The left control key has to be pressed additionally.
+        release_key(0xA2)
+
     pressed_keys.remove(vKey_id)
     Hook.triggered_keys.append((vKey_id, False))
-    Send.release_key(vKey_id)
+    if vKey_id == 0x88:
+        # The Numpad Enter key
+        Send.release_key(0x0D, 1)
+    elif vKey_id in (1, 2, 4, 5, 6):
+        Send.release_mouse_key(vKey_id)
+    else:
+        Send.release_key(vKey_id)
     print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
 
 def release_unicode_key(unicode_id):
@@ -37,8 +59,10 @@ def type_key(vKey_id):
     release_key(vKey_id)
 
 def repress_key(vKey_id):
-    Hook.triggered_keys.append((vKey_id, True))
-    Send.press_key(vKey_id)
+    if vKey_id not in (1, 2, 4, 5, 6):
+        # Mouse keys should not be repeated...
+        Hook.triggered_keys.append((vKey_id, True))
+        Send.press_key(vKey_id)
 
 #TODO: implement repress of unicode-keys
 

@@ -151,11 +151,13 @@ layer_1.add_ComplexKey(VirtualKey("SPACE"), VirtualKey("SPACE"), layer_3)
 layer_1.add_SimpleMod(VirtualKey("OEM_102"), layer_4)
 layer_1.add_SimpleMod(VirtualKey("OEM_MINUS"), layer_4)
 
+layer_1.add_SimpleKey(VirtualKey("NRETURN"), VirtualKey("NRETURN"))
+
 def_layer = Layer()
 def_layer.add_default_keys()
-def_layer.add_SimpleUnicodeKey(VirtualKey("F"), "?")
+# def_layer.add_SimpleUnicodeKey(VirtualKey("F"), "?")
 
-map = KeyMap(layer_1)
+map = KeyMap(def_layer)
 
 Hook.create_hook(map.process_keystroke)
 Hook.pump_messages(map.update, 0.001)
