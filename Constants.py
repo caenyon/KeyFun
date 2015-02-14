@@ -22,19 +22,6 @@ vKeyToScanCode = {8: 14, 9: 15, 13: 28, 19: 69, 20: 58, 27: 1, 32: 57, 33: 73, 3
 vExtendedKeys = [173, 144, 46, 33, 34, 35, 36, 165, 166, 167, 40, 44, 45, 174, 175, 176, 177, 178, 179, 161, 163, 91,
                  92, 93, 37, 38, 39, 111]
 
-vKeyToString = {'VK_OEM_5': '^', 'VK_OEM_4': 'ß', 'VK_OEM_6': '´', 'VK_BACK': 'BS', 'VK_TAB': '⇥', 'VK_OEM_1': 'Ü',
-                'VK_OEM_PLUS': '+', 'VK_RETURN': 'RET', 'VK_CAPITAL': '⇩', 'VK_OEM_3': 'Ö', 'VK_OEM_7': 'Ä',
-                'VK_OEM_2': '#', 'VK_LSHIFT': '⇧', 'VK_OEM_102': '<', 'VK_OEM_COMMA': ',', 'VK_OEM_PERIOD': '.',
-                'VK_OEM_MINUS': '-', 'VK_RSHIFT': '⇧', 'VK_LCONTROL': 'CTRL', 'VK_LWIN': 'WIN', 'VK_LMENU': 'ALT',
-                'VK_SPACE': 'SPACE', 'VK_RMENU': 'ALT', 'VK_RWIN': 'WIN', 'VK_APPS': 'MENU', 'VK_RCONTROL': 'CTRL',
-                'VK_SUBTRACT': 'SUB', 'VK_MULTIPLY': 'MULT', 'VK_DIVIDE': 'DIV', 'VK_VOLUME_DOWN': 'V-',
-                'VK_VOLUME_UP': 'V+', 'VK_VOLUME_MUTE': 'MUTE', 'VK_DELETE': 'DEL', 'VK_INSERT': 'INS',
-                'VK_SNAPSHOT': 'PRINT', 'VK_SCROLL': 'SCRLL\nLOCK', 'VK_NUMLOCK': 'NUM\nLOCK',
-                'VK_MEDIA_PLAY_PAUSE': 'PLAY', 'VK_MEDIA_STOP': 'STOP', 'VK_MEDIA_PREV_TRACK': 'PREV',
-                'VK_MEDIA_NEXT_TRACK': 'NEXT', 'VK_LEFT': '←', 'VK_RIGHT': '→', 'VK_UP': '↑', 'VK_DOWN': '↓',
-                'VK_BROWSER_BACK': '↙', 'VK_BROWSER_FORWARD': '↗', 'VK_NRETURN': 'NRET', 'VK_DECIMAL': 'N.',
-                'VK_ESCAPE': 'ESC'}
-
 mouse_codes = {0x0200: "WM_MOUSEMOVE", 0x0201: "WM_LBUTTONDOWN", 0x0202: "WM_LBUTTONUP", 0x0204: "WM_RBUTTONDOWN",
                0x0205: "WM_RBUTTONUP", 0x0207: "WM_MBUTTONDOWN", 0x0208: "WM_MBUTTONUP", 0x020A: "WM_MOUSEWHEEL",
                0x020B: "WM_XBUTTONDOWN", 0x020C: "WM_XBUTTONUP", 0x020E: "WM_MOUSEHWHEEL", }
@@ -57,34 +44,6 @@ for i, j in simpleModRaw:
     simpleMod[vk_to_id['VK_' + i]] = vk_to_id['VK_' + j]
 
 
-def parse_geometry(geometry):
-    """
-
-    :param geometry: string containing Tkinter representation of the size and position of a window.
-    :return: width, height, pos_x and pos_y of the window
-    :rtype: tuple
-    :raise ValueError: String doesn't match expected format.
-    """
-    m = re.match("(\d+)x(\d+)([-+]\d+)([-+]\d+)", geometry)
-    if not m:
-        raise ValueError("failed to parse geometry string")
-    return map(int, m.groups())
-
-
-def id_to_symbol(vkey):
-    """
-    Returns a short symbol for a virtual key code vkey.
-
-    :param vkey: id of a virtual key, e.g. 0x20
-    :return: short symbol
-    :rtype: str
-    """
-    if vkey in vKeyToString:
-        return vKeyToString[vkey]
-    else:
-        return vkey[3:].replace('NUMPAD', 'N')
-
-
 def id_to_vkey(code):
     """
     Returns a virtual key name for a virtual key code code.
@@ -104,4 +63,3 @@ def id_to_vkey(code):
         return 'VK_' + chr(code)
     else:
         return pyHook.HookConstants.id_to_vk.get(code)
-
