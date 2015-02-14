@@ -24,7 +24,6 @@ class Layer(object):
     def add_SimpleUnicodeKey(self, vKey_physical, unicode_key):
         self.layerDict[int(vKey_physical)] = SimpleUnicodeKey(unicode_key)
 
-
     def add_SimpleMod(self, vKey_physical, layer_target):
         self.layerDict[int(vKey_physical)] = SimpleModifier(layer_target)
 

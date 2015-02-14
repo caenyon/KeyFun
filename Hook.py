@@ -1,9 +1,11 @@
-import pyHook
 import time
-import pythoncom
-import Constants
 
+import pyHook
+import pythoncom
+
+import Constants
 from Key import VirtualKey
+
 
 __author__ = 'Felix'
 
@@ -16,8 +18,6 @@ hook_manager = None
 def create_hook(process_keystroke_func):
     """
     Creates a keyboard hook.
-
-    :param event_all: function(func: pyHook.KeyboardEvent): bool
     """
     global process_keystroke, hook_manager
     process_keystroke = process_keystroke_func
@@ -28,18 +28,19 @@ def create_hook(process_keystroke_func):
     pyHook.cpyHook.cSetHook(pyHook.HookConstants.WH_MOUSE_LL, mouse_handler)
     # TODO close hooks on exit...
 
+
 def pump_messages(update, pump_messages_delay):
     """
     Pumps messages until Hook.exit_flag is set.
     """
 
     while True:
-
         update()
         pythoncom.PumpWaitingMessages()
         time.sleep(pump_messages_delay)
 
-def mouse_handler(msg, x, y, data, flags, time, hwnd, window_name):
+
+def mouse_handler(msg, _x, _y, data, _flags, _time, _hwnd, _window_name):
     # Check if the msg is known
     try:
         name = Constants.mouse_codes[msg]
@@ -80,6 +81,7 @@ def mouse_handler(msg, x, y, data, flags, time, hwnd, window_name):
 
     return filter_dublicates(mouse_event_id, key_down)
 
+
 def handle_keyboard_all(event):
     """
     Method that processes keyboard events sent by pyHook.
@@ -112,13 +114,14 @@ def handle_keyboard_all(event):
 
     return filter_dublicates(event.KeyID, key_down)
 
+
 def filter_dublicates(vKey_id, key_down):
     # check if the received key event was triggered by the program
     if (vKey_id, key_down) in triggered_keys:
         triggered_keys.remove((vKey_id, key_down))
         return True
     else:
-        if key_down and not vKey_id in physically_pressed_keys:
+        if key_down and vKey_id not in physically_pressed_keys:
             # Key pressed event
             physically_pressed_keys.add(vKey_id)
 

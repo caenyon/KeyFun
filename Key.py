@@ -28,7 +28,7 @@ class VirtualKey(object):
                 raise AttributeError('Integer {} ({}) is not a valid virtual key ID.'.format(i, hex(i)))
         elif isinstance(i, str):
             if not i.startswith('VK_'):
-                i = 'VK_' + i
+                i = 'VK_{0}'.format(i)
 
             if i in Constants.vk_to_id:
                 self.id = Constants.vk_to_id[i]

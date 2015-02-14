@@ -30,7 +30,7 @@ class Input(ctypes.Structure):
 
 
 def press_key(vkey_code, extended_flag=None):
-    #print('press {}'.format(Constants.id_to_vkey(vkey_code)))
+    # print('press {}'.format(Constants.id_to_vkey(vkey_code)))
     if extended_flag is None:
         extended_flag = int(vkey_code in Constants.vExtendedKeys)
 
@@ -40,6 +40,7 @@ def press_key(vkey_code, extended_flag=None):
     x = Input(ctypes.c_ulong(1), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
+
 def scroll(x):
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
@@ -47,16 +48,18 @@ def scroll(x):
     x = Input(ctypes.c_ulong(0), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
+
 def release_key(vkey_code, extended_flag=None):
-    #print('release {}'.format(Constants.id_to_vkey(vkey_code)))
+    # print('release {}'.format(Constants.id_to_vkey(vkey_code)))
     if extended_flag is None:
         extended_flag = int(vkey_code in Constants.vExtendedKeys)
 
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
-    ii_.ki = KeyBdInput(vkey_code, get_scan_code(vkey_code), 0x0002+extended_flag, 0, ctypes.pointer(extra))
+    ii_.ki = KeyBdInput(vkey_code, get_scan_code(vkey_code), 0x0002 + extended_flag, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(1), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
 
 def press_mouse_key(vkey_code):
     # down
@@ -65,6 +68,7 @@ def press_mouse_key(vkey_code):
     # middle: 0x20
     # x button: 0x80
     data = 0x0
+    flags = 0x0
     if vkey_code == 0x1:
         flags = 0x2
     elif vkey_code == 0x2:
@@ -84,6 +88,7 @@ def press_mouse_key(vkey_code):
     x = Input(ctypes.c_ulong(0), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
+
 def release_mouse_key(vkey_code):
     # up
     # left: 0x4
@@ -91,6 +96,7 @@ def release_mouse_key(vkey_code):
     # middle: 0x40
     # x button: 0x100
     data = 0x0
+    flags = 0x0
     if vkey_code == 0x1:
         flags = 0x4
     elif vkey_code == 0x2:
@@ -109,6 +115,7 @@ def release_mouse_key(vkey_code):
     ii_.mi = MouseInput(0, 0, data, flags, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(0), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
 
 def press_key_u(vkey_code):
     extra = ctypes.c_ulong(0)
@@ -132,7 +139,7 @@ def get_scan_code(vkey_code):
     else:
         return 0
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     press_key_u(0x20AC)
     release_key_u(0x20AC)

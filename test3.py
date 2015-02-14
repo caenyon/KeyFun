@@ -1,5 +1,6 @@
-import Send
 import time
+
+import Send
 
 
 Send.press_mouse_key(1)

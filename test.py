@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from Key import SimpleKey, VirtualKey
+from Key import VirtualKey
 import Hook
 
 __author__ = 'Felix'
@@ -11,8 +11,9 @@ from KeyMap import KeyMap
 
 def event_all(event):
     key_down = (event.IsTransition() == 0)
-    map.process_keystroke(event.KeyID, key_down)
+    key_map.process_keystroke(event.KeyID, key_down)
     return False
+
 
 layer_2 = Layer()
 layer_2.add_SimpleKey(VirtualKey("Q"), VirtualKey("PRIOR"))
@@ -94,21 +95,21 @@ layer_4.add_SimpleKey(VirtualKey("E"), VirtualKey("F10"))
 layer_4.add_SimpleKey(VirtualKey("R"), VirtualKey("F9"))
 layer_4.add_SimpleKey(VirtualKey("T"), VirtualKey("SCROLL"))
 
-#layer_4.add_SimpleKey(VirtualKey("CAPITAL"), VirtualKey(""))
+# layer_4.add_SimpleKey(VirtualKey("CAPITAL"), VirtualKey(""))
 layer_4.add_SimpleKey(VirtualKey("A"), VirtualKey("F8"))
 layer_4.add_SimpleKey(VirtualKey("S"), VirtualKey("F7"))
 layer_4.add_SimpleKey(VirtualKey("D"), VirtualKey("F6"))
 layer_4.add_SimpleKey(VirtualKey("F"), VirtualKey("F5"))
 layer_4.add_SimpleKey(VirtualKey("G"), VirtualKey("SNAPSHOT"))
 
-#layer_4.add_SimpleKey(VirtualKey("OEM_102"), VirtualKey(""))
+# layer_4.add_SimpleKey(VirtualKey("OEM_102"), VirtualKey(""))
 layer_4.add_SimpleKey(VirtualKey("Y"), VirtualKey("F4"))
 layer_4.add_SimpleKey(VirtualKey("X"), VirtualKey("F3"))
 layer_4.add_SimpleKey(VirtualKey("C"), VirtualKey("F2"))
 layer_4.add_SimpleKey(VirtualKey("V"), VirtualKey("F1"))
 layer_4.add_SimpleKey(VirtualKey("B"), VirtualKey("PAUSE"))
 
-###RIGHT
+# RIGHT
 layer_4.add_SimpleKey(VirtualKey("Z"), VirtualKey("PRIOR"))
 layer_4.add_SimpleKey(VirtualKey("U"), VirtualKey("BACK"))
 layer_4.add_SimpleKey(VirtualKey("I"), VirtualKey("UP"))
@@ -121,7 +122,6 @@ layer_4.add_SimpleKey(VirtualKey("K"), VirtualKey("DOWN"))
 layer_4.add_SimpleKey(VirtualKey("L"), VirtualKey("RIGHT"))
 layer_4.add_SimpleKey(VirtualKey("OEM_3"), VirtualKey("END"))
 
-
 layer_4.add_SimpleKey(VirtualKey("3"), VirtualKey("ESCAPE"))
 layer_4.add_SimpleKey(VirtualKey("4"), VirtualKey("BACK"))
 layer_4.add_SimpleKey(VirtualKey("5"), VirtualKey("RETURN"))
@@ -129,10 +129,6 @@ layer_4.add_SimpleKey(VirtualKey("5"), VirtualKey("RETURN"))
 layer_4.add_SimpleKey(VirtualKey("9"), VirtualKey("ESCAPE"))
 layer_4.add_SimpleKey(VirtualKey("8"), VirtualKey("BACK"))
 layer_4.add_SimpleKey(VirtualKey("7"), VirtualKey("RETURN"))
-
-
-
-
 
 layer_1 = Layer()
 layer_1.add_default_keys()
@@ -145,8 +141,6 @@ layer_1.add_SimpleKey(VirtualKey("9"), VirtualKey("ESCAPE"))
 layer_1.add_SimpleKey(VirtualKey("8"), VirtualKey("BACK"))
 layer_1.add_SimpleKey(VirtualKey("7"), VirtualKey("RETURN"))
 
-#layer_1.add_SimpleKey(VirtualKey("LSHIFT"), VirtualKey("SHIFT"))
-#layer_1.add_SimpleKey(VirtualKey("RSHIFT"), VirtualKey("SHIFT"))
 layer_1.add_ComplexKey(VirtualKey("SPACE"), VirtualKey("SPACE"), layer_3)
 layer_1.add_SimpleMod(VirtualKey("OEM_102"), layer_4)
 layer_1.add_SimpleMod(VirtualKey("OEM_MINUS"), layer_4)
@@ -157,7 +151,7 @@ def_layer = Layer()
 def_layer.add_default_keys()
 # def_layer.add_SimpleUnicodeKey(VirtualKey("F"), "?")
 
-map = KeyMap(def_layer)
+key_map = KeyMap(def_layer)
 
-Hook.create_hook(map.process_keystroke)
-Hook.pump_messages(map.update, 0.001)
+Hook.create_hook(key_map.process_keystroke)
+Hook.pump_messages(key_map.update, 0.001)

@@ -1,13 +1,16 @@
-import Queue
+import time
+
 import Constants
+
 import Hook
 import Send
 from Key import SimpleKey, SimpleModifier, ComplexKey, SimpleUnicodeKey
-import time
+
 
 __author__ = 'Felix'
 
 pressed_keys = set()
+
 
 def press_key(vKey_id):
     if vKey_id == 0xA5:
@@ -27,8 +30,6 @@ def press_key(vKey_id):
 
 
 def release_key(vKey_id):
-
-
     if vKey_id == 0xA5:
         # The AltGR-Key. The left control key has to be pressed additionally.
         release_key(0xA2)
@@ -44,19 +45,23 @@ def release_key(vKey_id):
         Send.release_key(vKey_id)
     print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
 
+
 def release_unicode_key(unicode_id):
-    #TODO: implement
+    # TODO: implement
     Send.release_key_u(unicode_id)
     pass
+
 
 def press_unicode_key(unicode_id):
     Send.press_key_u(unicode_id)
     pass
 
+
 def type_key(vKey_id):
     print('---Typed {}'.format(vKey_id))
     press_key(vKey_id)
     release_key(vKey_id)
+
 
 def repress_key(vKey_id):
     if vKey_id not in (1, 2, 4, 5, 6):
@@ -64,9 +69,11 @@ def repress_key(vKey_id):
         Hook.triggered_keys.append((vKey_id, True))
         Send.press_key(vKey_id)
 
-#TODO: implement repress of unicode-keys
+
+# TODO: implement repress of unicode-keys
 
 
+# noinspection PyMethodMayBeStatic
 class KeyMap(object):
     def __init__(self, init_layer):
         self.init_layer = init_layer
@@ -81,7 +88,7 @@ class KeyMap(object):
         self.last_pressed = {}
 
     def process_keystroke(self, vkey_id, key_down):
-        #print('---{}-----------{}-----------------------------------------'.format(vkey_id, key_down))
+        # print('---{}-----------{}-----------------------------------------'.format(vkey_id, key_down))
         # if the key had been released because of a layer change, the corresponding physical key release should be
         # ignored.
         if not key_down and vkey_id in self.ignore_key_release:
@@ -109,7 +116,7 @@ class KeyMap(object):
 
                     # type the key associated with the ComplexKey
                     type_key(int(action.vKeyName))
-                    #TODO: what about unicode here?
+                    # TODO: what about unicode here?
 
                     # remove the ComplexKey from the list of delayed_keys
                     self.delayed_keys.pop(0)
@@ -154,7 +161,7 @@ class KeyMap(object):
                         del self.physically_pressed_keys[int(action.vKeyName)]
                         release_key(int(action.vKeyName))
                     elif isinstance(action, SimpleUnicodeKey):
-                        del self.physically_pressed_keys[int(action.vKeyName)]
+                        del self.physically_pressed_keys[int(action.id)]
                         release_unicode_key(action.id)
                     else:
                         self.release_layer()
@@ -176,7 +183,7 @@ class KeyMap(object):
 
             del self.physically_pressed_keys[vkey_id]
 
-        #print('performing action')
+        # print('performing action')
         if isinstance(action, SimpleKey):
             self.process_SimpleKey(action, key_down)
         elif isinstance(action, SimpleUnicodeKey):
@@ -265,13 +272,13 @@ class KeyMap(object):
                 print "long press!"
 
         pressed = frozenset(pressed_keys)
-        all = set()
-        all = all.union(pressed)
+        all_pressed = set()
+        all_pressed = all_pressed.union(pressed)
         for key in self.last_pressed:
-            all.add(key)
+            all_pressed.add(key)
 
-        for key in all:
-            if key in pressed and not key in self.last_pressed:
+        for key in all_pressed:
+            if key in pressed and key not in self.last_pressed:
                 self.last_pressed[key] = time.time() + self.key_init_repeat_delay
             elif key in pressed and key in self.last_pressed:
                 if time.time() - self.last_pressed[key] > self.key_repeat_delay:
