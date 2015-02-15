@@ -21,48 +21,37 @@ class MouseInput(ctypes.Structure):
                 ("dwFlags", ctypes.c_ulong), ("time", ctypes.c_ulong), ("dwExtraInfo", PUL)]
 
 
-class Input_I(ctypes.Union):
+class InputI(ctypes.Union):
     _fields_ = [("ki", KeyBdInput), ("mi", MouseInput), ("hi", HardwareInput)]
 
 
 class Input(ctypes.Structure):
-    _fields_ = [("type", ctypes.c_ulong), ("ii", Input_I)]
+    _fields_ = [("type", ctypes.c_ulong), ("ii", InputI)]
 
 
 def press_key(vkey_code, extended_flag=None):
-    # print('press {}'.format(vkey_code))
     if extended_flag is None:
         extended_flag = int(vkey_code in Constants.vExtendedKeys)
 
     extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
+    ii_ = InputI()
     ii_.ki = KeyBdInput(vkey_code, get_scan_code(vkey_code), extended_flag, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(1), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 
-def scroll(x):
-    extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
-    ii_.mi = MouseInput(0, 0, x, 0x0800, 0, ctypes.pointer(extra))
-    x = Input(ctypes.c_ulong(0), ii_)
-    SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-
 def release_key(vkey_code, extended_flag=None):
-    # print('release {}'.format(vkey_code))
     if extended_flag is None:
         extended_flag = int(vkey_code in Constants.vExtendedKeys)
 
     extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
+    ii_ = InputI()
     ii_.ki = KeyBdInput(vkey_code, get_scan_code(vkey_code), 0x0002 + extended_flag, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(1), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 
 def press_mouse_key(vkey_code):
-    # print('press {}'.format(vkey_code))
     # down
     # left: 0x2
     # right: 0x8
@@ -84,14 +73,13 @@ def press_mouse_key(vkey_code):
         flags = 0x80
 
     extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
+    ii_ = InputI()
     ii_.mi = MouseInput(0, 0, data, flags, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(0), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 
 def release_mouse_key(vkey_code):
-    # print('release {}'.format(vkey_code))
     # up
     # left: 0x4
     # right: 0x10
@@ -113,7 +101,7 @@ def release_mouse_key(vkey_code):
         flags = 0x100
 
     extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
+    ii_ = InputI()
     ii_.mi = MouseInput(0, 0, data, flags, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(0), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
@@ -121,7 +109,7 @@ def release_mouse_key(vkey_code):
 
 def press_key_u(vkey_code):
     extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
+    ii_ = InputI()
     ii_.ki = KeyBdInput(0, vkey_code, 0x0004, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(1), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
@@ -129,7 +117,7 @@ def press_key_u(vkey_code):
 
 def release_key_u(vkey_code):
     extra = ctypes.c_ulong(0)
-    ii_ = Input_I()
+    ii_ = InputI()
     ii_.ki = KeyBdInput(0, vkey_code, 0x0006, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(1), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
@@ -140,8 +128,3 @@ def get_scan_code(vkey_code):
         return Constants.vKeyToScanCode[vkey_code]
     else:
         return 0
-
-
-if __name__ == '__main__':
-    press_key_u(0x20AC)
-    release_key_u(0x20AC)
