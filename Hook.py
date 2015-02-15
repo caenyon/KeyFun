@@ -75,7 +75,7 @@ def mouse_handler(msg, _x, _y, data, _flags, _time, _hwnd, _window_name):
             # XBUTTON2 event
             mouse_event_id = 0x06
         else:
-            raise Exception("Unknown XBUTTON event: Name={1}, Data={2}".format(name, relevant_data))
+            raise Exception("Unknown XBUTTON event: Name={0}, Data={1}".format(name, relevant_data))
     else:
         raise Exception("Bad mouse event name: {}".format(name))
 
@@ -97,7 +97,7 @@ def handle_keyboard_all(event):
     key_down = (event.IsTransition() == 0)
 
     virtual_key = VirtualKey(event.KeyID)
-    print "-------", str(virtual_key), event.KeyID, event.IsExtended(), event.IsTransition()
+    # print "-------", str(virtual_key), event.KeyID, event.IsExtended(), event.IsTransition()
     # return True
 
     # this is the left control key that is sent with the right Alt key
@@ -119,8 +119,10 @@ def filter_dublicates(vKey_id, key_down):
     # check if the received key event was triggered by the program
     if (vKey_id, key_down) in triggered_keys:
         triggered_keys.remove((vKey_id, key_down))
+        print("triggered {0}, {1}".format(vKey_id, key_down))
         return True
     else:
+        print("physical {0}, {1}".format(vKey_id, key_down))
         if key_down and vKey_id not in physically_pressed_keys:
             # Key pressed event
             physically_pressed_keys.add(vKey_id)

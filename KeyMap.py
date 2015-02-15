@@ -26,7 +26,7 @@ def press_key(vKey_id):
         Send.press_mouse_key(vKey_id)
     else:
         Send.press_key(vKey_id)
-    print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
+    # print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
 
 
 def release_key(vKey_id):
@@ -43,7 +43,7 @@ def release_key(vKey_id):
         Send.release_mouse_key(vKey_id)
     else:
         Send.release_key(vKey_id)
-    print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
+    # print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
 
 
 def release_unicode_key(unicode_id):
@@ -229,18 +229,18 @@ class KeyMap(object):
 
     def process_SimpleKey(self, action, key_down):
         if key_down:
-            print('Key {} down'.format(action.vKeyName))
+            # print('Key {} down'.format(action.vKeyName))
             press_key(int(action.vKeyName))
         else:
-            print('Key {} up'.format(action.vKeyName))
+            # print('Key {} up'.format(action.vKeyName))
             release_key(int(action.vKeyName))
 
     def process_SimpleUnicodeKey(self, action, key_down):
         if key_down:
-            print('UnicodeKey {} down'.format(action.id))
+            # print('UnicodeKey {} down'.format(action.id))
             press_unicode_key(action.id)
         else:
-            print('UnicodeKey {} up'.format(action.id))
+            # print('UnicodeKey {} up'.format(action.id))
             release_unicode_key(action.id)
 
     def process_SimpleMod(self, action, key_down):

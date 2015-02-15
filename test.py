@@ -9,12 +9,6 @@ from Layout import Layer
 from KeyMap import KeyMap
 
 
-def event_all(event):
-    key_down = (event.IsTransition() == 0)
-    key_map.process_keystroke(event.KeyID, key_down)
-    return False
-
-
 layer_2 = Layer()
 layer_2.add_SimpleKey(VirtualKey("Q"), VirtualKey("PRIOR"))
 layer_2.add_SimpleKey(VirtualKey("W"), VirtualKey("BACK"))
@@ -140,6 +134,7 @@ layer_1.add_SimpleKey(VirtualKey("5"), VirtualKey("RETURN"))
 layer_1.add_SimpleKey(VirtualKey("9"), VirtualKey("ESCAPE"))
 layer_1.add_SimpleKey(VirtualKey("8"), VirtualKey("BACK"))
 layer_1.add_SimpleKey(VirtualKey("7"), VirtualKey("RETURN"))
+layer_1.add_SimpleUnicodeKey(VirtualKey("CAPITAL"), 0x00DF)
 
 layer_1.add_ComplexKey(VirtualKey("SPACE"), VirtualKey("SPACE"), layer_3)
 layer_1.add_SimpleMod(VirtualKey("OEM_102"), layer_4)
@@ -151,7 +146,7 @@ def_layer = Layer()
 def_layer.add_default_keys()
 # def_layer.add_SimpleUnicodeKey(VirtualKey("F"), "?")
 
-key_map = KeyMap(def_layer)
+key_map = KeyMap(layer_1)
 
 Hook.create_hook(key_map.process_keystroke)
 Hook.pump_messages(key_map.update, 0.001)

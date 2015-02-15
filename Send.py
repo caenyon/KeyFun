@@ -30,7 +30,7 @@ class Input(ctypes.Structure):
 
 
 def press_key(vkey_code, extended_flag=None):
-    # print('press {}'.format(Constants.id_to_vkey(vkey_code)))
+    print('press {}'.format(vkey_code))
     if extended_flag is None:
         extended_flag = int(vkey_code in Constants.vExtendedKeys)
 
@@ -50,7 +50,7 @@ def scroll(x):
 
 
 def release_key(vkey_code, extended_flag=None):
-    # print('release {}'.format(Constants.id_to_vkey(vkey_code)))
+    print('release {}'.format(vkey_code))
     if extended_flag is None:
         extended_flag = int(vkey_code in Constants.vExtendedKeys)
 
@@ -62,6 +62,7 @@ def release_key(vkey_code, extended_flag=None):
 
 
 def press_mouse_key(vkey_code):
+    print('press {}'.format(vkey_code))
     # down
     # left: 0x2
     # right: 0x8
@@ -90,6 +91,7 @@ def press_mouse_key(vkey_code):
 
 
 def release_mouse_key(vkey_code):
+    print('release {}'.format(vkey_code))
     # up
     # left: 0x4
     # right: 0x10
