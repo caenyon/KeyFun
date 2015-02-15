@@ -1,5 +1,7 @@
 import ctypes
 
+# mapping from virtual key ids to scancodes. this list was created with an activated german keyboard layout and may be
+# incomplete.
 KEY_ID_TO_SCANCODE = {8: 14, 9: 15, 13: 28, 19: 69, 20: 58, 27: 1, 32: 57, 33: 73, 34: 81, 35: 79, 36: 71, 37: 75,
                       38: 72, 39: 77, 40: 80, 44: 55, 45: 82, 46: 83, 48: 11, 49: 2, 50: 3, 51: 4, 52: 5, 53: 6, 54: 7,
                       55: 8, 56: 9, 57: 10, 65: 30, 66: 48, 67: 46, 68: 32, 69: 18, 70: 33, 71: 34, 72: 35, 73: 23,
@@ -10,8 +12,15 @@ KEY_ID_TO_SCANCODE = {8: 14, 9: 15, 13: 28, 19: 69, 20: 58, 27: 1, 32: 57, 33: 7
                       123: 88, 144: 69, 145: 70, 160: 42, 161: 54, 162: 29, 163: 29, 164: 56, 165: 56, 186: 26, 187: 27,
                       188: 51, 189: 53, 190: 52, 191: 43, 192: 39, 219: 12, 220: 41, 221: 13, 222: 40, 226: 86}
 
+# this list contains the virtual key ids which should be sent with the extended bit set.
 EXTENDED_KEY_IDS = [173, 144, 46, 33, 34, 35, 36, 165, 166, 167, 40, 44, 45, 174, 175, 176, 177, 178, 179, 161, 163, 91,
                     92, 93, 37, 38, 39, 111]
+
+KEYEVENTF_EXTENDEDKEY = 0x0001
+KEYEVENTF_KEYUP = 0x0002
+KEYEVENTF_UNICODE = 0x0004
+
+MOUSE_KEY_ID_TO_SENDKEYS_FLAG = {0x1: 0x0002, 0x2: 0x0008, 0x4: 0x0020, 0x5: 0x0080, 0x6: 0x0080}
 
 SendInput = ctypes.windll.user32.SendInput
 PUL = ctypes.POINTER(ctypes.c_ulong)
@@ -39,96 +48,42 @@ class Input(ctypes.Structure):
     _fields_ = [("type", ctypes.c_ulong), ("ii", InputI)]
 
 
-def press_key(vkey_code, extended_flag=None):
-    if extended_flag is None:
-        extended_flag = int(vkey_code in EXTENDED_KEY_IDS)
+def send_keyboard_input(key_id, down, unicode_key=False, extended_flag=None):
+    # https://msdn.microsoft.com/en-us/library/windows/desktop/ms646271(v=vs.85).aspx
 
+    flags = 0
+    if not down:
+        flags += KEYEVENTF_KEYUP
+
+    if unicode_key:
+        # For a unicode key, key_id must be 0 and scancode must contain the unicode key id.
+        scancode = key_id
+        key_id = 0
+        flags += KEYEVENTF_UNICODE
+    else:
+        scancode = KEY_ID_TO_SCANCODE.get(key_id, 0)  # If key_id is not in list, take 0 as default.
+        if (extended_flag is not None and extended_flag) or (extended_flag is None and key_id in EXTENDED_KEY_IDS):
+            flags += KEYEVENTF_EXTENDEDKEY
+
+    # Create structs and send input
     extra = ctypes.c_ulong(0)
     ii_ = InputI()
-    ii_.ki = KeyBdInput(vkey_code, KEY_ID_TO_SCANCODE.get(vkey_code, 0), extended_flag, 0, ctypes.pointer(extra))
+    ii_.ki = KeyBdInput(key_id, scancode, flags, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(1), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 
-def release_key(vkey_code, extended_flag=None):
-    if extended_flag is None:
-        extended_flag = int(vkey_code in EXTENDED_KEY_IDS)
+def send_mouse_input(key_id, down):
+    # https://msdn.microsoft.com/en-us/library/windows/desktop/ms646273(v=vs.85).aspx
 
-    extra = ctypes.c_ulong(0)
-    ii_ = InputI()
-    ii_.ki = KeyBdInput(vkey_code, KEY_ID_TO_SCANCODE.get(vkey_code, 0), 0x0002 + extended_flag, 0,
-                        ctypes.pointer(extra))
-    x = Input(ctypes.c_ulong(1), ii_)
-    SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+    flags = MOUSE_KEY_ID_TO_SENDKEYS_FLAG[key_id]
+    if not down:
+        flags *= 2
+    data = key_id - 0x4 if key_id > 0x4 else 0
 
-
-def press_mouse_key(vkey_code):
-    # down
-    # left: 0x2
-    # right: 0x8
-    # middle: 0x20
-    # x button: 0x80
-    data = 0x0
-    flags = 0x0
-    if vkey_code == 0x1:
-        flags = 0x2
-    elif vkey_code == 0x2:
-        flags = 0x8
-    elif vkey_code == 0x4:
-        flags = 0x20
-    elif vkey_code == 0x5:
-        data = 0x1
-        flags = 0x80
-    elif vkey_code == 0x6:
-        data = 0x2
-        flags = 0x80
-
+    # Create structs and send input
     extra = ctypes.c_ulong(0)
     ii_ = InputI()
     ii_.mi = MouseInput(0, 0, data, flags, 0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(0), ii_)
-    SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-
-def release_mouse_key(vkey_code):
-    # up
-    # left: 0x4
-    # right: 0x10
-    # middle: 0x40
-    # x button: 0x100
-    data = 0x0
-    flags = 0x0
-    if vkey_code == 0x1:
-        flags = 0x4
-    elif vkey_code == 0x2:
-        flags = 0x10
-    elif vkey_code == 0x4:
-        flags = 0x40
-    elif vkey_code == 0x5:
-        data = 0x1
-        flags = 0x100
-    elif vkey_code == 0x6:
-        data = 0x2
-        flags = 0x100
-
-    extra = ctypes.c_ulong(0)
-    ii_ = InputI()
-    ii_.mi = MouseInput(0, 0, data, flags, 0, ctypes.pointer(extra))
-    x = Input(ctypes.c_ulong(0), ii_)
-    SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-
-def press_key_u(vkey_code):
-    extra = ctypes.c_ulong(0)
-    ii_ = InputI()
-    ii_.ki = KeyBdInput(0, vkey_code, 0x0004, 0, ctypes.pointer(extra))
-    x = Input(ctypes.c_ulong(1), ii_)
-    SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-
-def release_key_u(vkey_code):
-    extra = ctypes.c_ulong(0)
-    ii_ = InputI()
-    ii_.ki = KeyBdInput(0, vkey_code, 0x0006, 0, ctypes.pointer(extra))
-    x = Input(ctypes.c_ulong(1), ii_)
     SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))

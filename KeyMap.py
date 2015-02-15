@@ -1,11 +1,10 @@
 import time
+import logging
 
 import Constants
-
 import Hook
 import Send
 from Key import SimpleKey, SimpleModifier, ComplexKey, SimpleUnicodeKey
-import logging
 
 __author__ = 'Felix'
 
@@ -21,11 +20,11 @@ def press_key(vKey_id):
     Hook.triggered_keys.append((vKey_id, True))
     if vKey_id == 0x88:
         # The Numpad Enter key
-        Send.press_key(0x0D, 1)
+        Send.send_keyboard_input(0x0D, down=True, extended_flag=True)
     elif vKey_id in (1, 2, 4, 5, 6):
-        Send.press_mouse_key(vKey_id)
+        Send.send_mouse_input(vKey_id, down=True)
     else:
-        Send.press_key(vKey_id)
+        Send.send_keyboard_input(vKey_id, down=True)
     # print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
 
 
@@ -38,23 +37,20 @@ def release_key(vKey_id):
     Hook.triggered_keys.append((vKey_id, False))
     if vKey_id == 0x88:
         # The Numpad Enter key
-        Send.release_key(0x0D, 1)
+        Send.send_keyboard_input(0x0D, down=False, extended_flag=True)
     elif vKey_id in (1, 2, 4, 5, 6):
-        Send.release_mouse_key(vKey_id)
+        Send.send_mouse_input(vKey_id, down=False)
     else:
-        Send.release_key(vKey_id)
+        Send.send_keyboard_input(vKey_id, down=False)
     # print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
 
 
 def release_unicode_key(unicode_id):
-    # TODO: implement
-    Send.release_key_u(unicode_id)
-    pass
+    Send.send_keyboard_input(unicode_id, down=False, unicode_key=True)
 
 
 def press_unicode_key(unicode_id):
-    Send.press_key_u(unicode_id)
-    pass
+    Send.send_keyboard_input(unicode_id, down=True, unicode_key=True)
 
 
 def type_key(vKey_id):
@@ -67,7 +63,7 @@ def repress_key(vKey_id):
     if vKey_id not in (1, 2, 4, 5, 6, 91):
         # Mouse keys and left win key should not be repeated...
         Hook.triggered_keys.append((vKey_id, True))
-        Send.press_key(vKey_id)
+        Send.send_keyboard_input(vKey_id, down=True)
 
 
 # TODO: implement repress of unicode-keys
