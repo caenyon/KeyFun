@@ -6,7 +6,8 @@ from Key import SimpleKey, SimpleModifier, ComplexKey, VirtualKey, SimpleUnicode
 
 
 class Layer(object):
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.layerDict = {}
 
     def __getitem__(self, item):

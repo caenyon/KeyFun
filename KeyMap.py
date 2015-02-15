@@ -5,7 +5,7 @@ import Constants
 import Hook
 import Send
 from Key import SimpleKey, SimpleModifier, ComplexKey, SimpleUnicodeKey
-
+import logging
 
 __author__ = 'Felix'
 
@@ -88,7 +88,8 @@ class KeyMap(object):
         self.last_pressed = {}
 
     def process_keystroke(self, vkey_id, key_down):
-        # print('---{}-----------{}-----------------------------------------'.format(vkey_id, key_down))
+        print('---{}-----------{}-----------------------------------------'.format(Constants.id_to_vkey(vkey_id),
+                                                                                   key_down))
         # if the key had been released because of a layer change, the corresponding physical key release should be
         # ignored.
         if not key_down and vkey_id in self.ignore_key_release:
@@ -216,6 +217,7 @@ class KeyMap(object):
             self.delayed_keys.pop(0)
 
     def set_layer(self, new_layer):
+        logging.info('New Layer: '+new_layer.name)
         self.layer = new_layer
 
     def release_layer(self):
@@ -226,6 +228,7 @@ class KeyMap(object):
             self.ignore_key_release.add(key)
         self.physically_pressed_keys = {}
         self.layer = self.init_layer
+        logging.info('New Layer: '+self.init_layer.name)
 
     def process_SimpleKey(self, action, key_down):
         if key_down:

@@ -8,8 +8,11 @@ __author__ = 'Felix'
 from Layout import Layer
 from KeyMap import KeyMap
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
-layer_2 = Layer()
+
+layer_2 = Layer('layer_2')
 layer_2.add_SimpleKey(VirtualKey("Q"), VirtualKey("PRIOR"))
 layer_2.add_SimpleKey(VirtualKey("W"), VirtualKey("BACK"))
 layer_2.add_SimpleKey(VirtualKey("E"), VirtualKey("UP"))
@@ -27,7 +30,7 @@ layer_2.add_SimpleKey(VirtualKey("X"), VirtualKey("TAB"))
 layer_2.add_SimpleKey(VirtualKey("C"), VirtualKey("INSERT"))
 layer_2.add_SimpleKey(VirtualKey("V"), VirtualKey("RETURN"))
 
-layer_3 = Layer()
+layer_3 = Layer('layer_3')
 
 layer_3.add_SimpleUnicodeKey(VirtualKey("TAB"), "$")
 layer_3.add_SimpleUnicodeKey(VirtualKey("Q"), "*")
@@ -80,7 +83,7 @@ layer_3.add_SimpleKey(VirtualKey("9"), VirtualKey("ESCAPE"))
 layer_3.add_SimpleKey(VirtualKey("8"), VirtualKey("BACK"))
 layer_3.add_SimpleKey(VirtualKey("7"), VirtualKey("RETURN"))
 
-layer_4 = Layer()
+layer_4 = Layer('layer_4')
 
 layer_4.add_SimpleKey(VirtualKey("TAB"), VirtualKey("TAB"))
 layer_4.add_SimpleKey(VirtualKey("Q"), VirtualKey("F12"))
@@ -124,7 +127,7 @@ layer_4.add_SimpleKey(VirtualKey("9"), VirtualKey("ESCAPE"))
 layer_4.add_SimpleKey(VirtualKey("8"), VirtualKey("BACK"))
 layer_4.add_SimpleKey(VirtualKey("7"), VirtualKey("RETURN"))
 
-layer_1 = Layer()
+layer_1 = Layer('layer_1')
 layer_1.add_default_keys()
 
 layer_1.add_SimpleKey(VirtualKey("3"), VirtualKey("ESCAPE"))
@@ -142,7 +145,7 @@ layer_1.add_SimpleMod(VirtualKey("OEM_MINUS"), layer_4)
 
 layer_1.add_SimpleKey(VirtualKey("NRETURN"), VirtualKey("NRETURN"))
 
-def_layer = Layer()
+def_layer = Layer('layer_def')
 def_layer.add_default_keys()
 # def_layer.add_SimpleUnicodeKey(VirtualKey("F"), "?")
 

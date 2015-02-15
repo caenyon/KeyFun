@@ -125,10 +125,10 @@ def filter_dublicates(vKey_id, key_down):
     # check if the received key event was triggered by the program
     if (vKey_id, key_down) in triggered_keys:
         triggered_keys.remove((vKey_id, key_down))
-        print("triggered {0}, {1}".format(vKey_id, key_down))
+        # print("triggered {0}, {1}".format(vKey_id, key_down))
         return True
     else:
-        print("physical {0}, {1}".format(vKey_id, key_down))
+        # print("physical {0}, {1}".format(vKey_id, key_down))
         if key_down and vKey_id not in physically_pressed_keys:
             # Key pressed event
             physically_pressed_keys.add(vKey_id)
