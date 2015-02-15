@@ -64,8 +64,8 @@ def type_key(vKey_id):
 
 
 def repress_key(vKey_id):
-    if vKey_id not in (1, 2, 4, 5, 6):
-        # Mouse keys should not be repeated...
+    if vKey_id not in (1, 2, 4, 5, 6, 91):
+        # Mouse keys and left win key should not be repeated...
         Hook.triggered_keys.append((vKey_id, True))
         Send.press_key(vKey_id)
 

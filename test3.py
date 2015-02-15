@@ -4,15 +4,13 @@ import Send
 
 
 print("start")
-Send.press_key(164)
-Send.press_key(0x11)
+Send.press_key(0x5B)
+Send.press_key(0x52)
 
 # time.sleep(1)
-Send.press_key(9)
-Send.release_key(9)
-Send.release_key(0x11)
+Send.release_key(0x52)
 # time.sleep(1)
-Send.release_key(164)
+Send.release_key(0x5B)
 
 print("end")
 
