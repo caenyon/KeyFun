@@ -3,7 +3,6 @@
 Constants contains several functions and constants useful in other modules.
 """
 __author__ = 'Felix'
-import re
 
 import pyHook
 
@@ -36,12 +35,6 @@ vk_to_id['VK_XBUTTON2'] = 0x06
 vk_to_id['VK_NRETURN'] = 0x88
 
 id_to_vk = dict([(v, k) for k, v in vk_to_id.items()])
-
-simpleModRaw = [('Q', 'NEXT'), ('W', 'BACK'), ('E', 'UP'), ('R', 'DELETE'), ('T', 'PRIOR'), ('A', 'HOME'),
-                ('S', 'LEFT'), ('D', 'DOWN'), ('F', 'RIGHT'), ('G', 'END')]
-simpleMod = {}
-for i, j in simpleModRaw:
-    simpleMod[vk_to_id['VK_' + i]] = vk_to_id['VK_' + j]
 
 
 def id_to_vkey(code):
