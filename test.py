@@ -151,5 +151,5 @@ def_layer.add_default_keys()
 
 key_map = KeyMap(layer_1)
 
-Hook.create_hook(key_map.process_keystroke)
+Hook.create_hook(key_map.process_keystroke, VirtualKey('SCROLL'))
 Hook.pump_messages(key_map.update, 0.001)
