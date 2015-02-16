@@ -2,55 +2,32 @@ import time
 import logging
 
 import Constants
-import Hook
-import Send
+from InOut.InOutAdapter import InOutAdapter
 from Key import SimpleKey, SimpleModifier, ComplexKey, SimpleUnicodeKey
+
 
 __author__ = 'Felix'
 
 pressed_keys = set()
+in_out_adapter = InOutAdapter()
 
 
 def press_key(vKey_id):
-    if vKey_id == 0xA5:
-        # The AltGR-Key. The left control key has to be pressed additionally.
-        press_key(0xA2)
-
     pressed_keys.add(vKey_id)
-    Hook.triggered_keys.append((vKey_id, True))
-    if vKey_id == 0x88:
-        # The Numpad Enter key
-        Send.send_keyboard_input(0x0D, down=True, extended_flag=True)
-    elif vKey_id in (1, 2, 4, 5, 6):
-        Send.send_mouse_input(vKey_id, down=True)
-    else:
-        Send.send_keyboard_input(vKey_id, down=True)
-    # print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
+    return in_out_adapter.send_key(vKey_id, True)
 
 
 def release_key(vKey_id):
-    if vKey_id == 0xA5:
-        # The AltGR-Key. The left control key has to be pressed additionally.
-        release_key(0xA2)
-
     pressed_keys.remove(vKey_id)
-    Hook.triggered_keys.append((vKey_id, False))
-    if vKey_id == 0x88:
-        # The Numpad Enter key
-        Send.send_keyboard_input(0x0D, down=False, extended_flag=True)
-    elif vKey_id in (1, 2, 4, 5, 6):
-        Send.send_mouse_input(vKey_id, down=False)
-    else:
-        Send.send_keyboard_input(vKey_id, down=False)
-    # print("PressedKeys: " + ", ".join([Constants.id_to_vkey(i) for i in pressed_keys]))
+    return in_out_adapter.send_key(vKey_id, False)
 
 
 def release_unicode_key(unicode_id):
-    Send.send_keyboard_input(unicode_id, down=False, unicode_key=True)
+    return in_out_adapter.send_unicode_key(unicode_id, False)
 
 
 def press_unicode_key(unicode_id):
-    Send.send_keyboard_input(unicode_id, down=True, unicode_key=True)
+    return in_out_adapter.send_unicode_key(unicode_id, True)
 
 
 def type_key(vKey_id):
@@ -62,8 +39,7 @@ def type_key(vKey_id):
 def repress_key(vKey_id):
     if vKey_id not in (1, 2, 4, 5, 6, 91):
         # Mouse keys and left win key should not be repeated...
-        Hook.triggered_keys.append((vKey_id, True))
-        Send.send_keyboard_input(vKey_id, down=True)
+        return in_out_adapter.send_key(vKey_id, True)
 
 
 # TODO: implement repress of unicode-keys

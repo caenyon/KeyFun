@@ -1,6 +1,6 @@
 import time
 
-import Send
+from InOut import Send
 
 time.sleep(3)
 key_id = 6

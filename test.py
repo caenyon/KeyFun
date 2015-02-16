@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from Key import VirtualKey
-import Hook
+from InOut import InOutAdapter
 
 __author__ = 'Felix'
 
@@ -151,5 +151,7 @@ def_layer.add_default_keys()
 
 key_map = KeyMap(layer_1)
 
-Hook.create_hook(key_map.process_keystroke, VirtualKey('SCROLL'))
-Hook.pump_messages(key_map.update, 0.001)
+io_adapter = InOutAdapter.InOutAdapter()
+
+io_adapter.create_input_hook(key_map.process_keystroke, VirtualKey('SCROLL'))
+io_adapter.pump_messages(key_map.update, 0.001)
