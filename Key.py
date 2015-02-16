@@ -4,8 +4,8 @@ __author__ = 'Felix'
 
 
 class SimpleKey(object):
-    def __init__(self, vKeyName):
-        self.vKeyName = vKeyName
+    def __init__(self, key_name):
+        self.vKeyName = key_name
 
 
 class SimpleModifier(object):
@@ -14,8 +14,8 @@ class SimpleModifier(object):
 
 
 class ComplexKey(object):
-    def __init__(self, vKeyName, layer):
-        self.vKeyName = vKeyName
+    def __init__(self, key_name, layer):
+        self.vKeyName = key_name
         self.newLayer = layer
 
 
