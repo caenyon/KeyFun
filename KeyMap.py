@@ -12,14 +12,14 @@ pressed_keys = set()
 in_out_adapter = InOutAdapter()
 
 
-def press_key(vKey_id):
-    pressed_keys.add(vKey_id)
-    return in_out_adapter.send_key(vKey_id, True)
+def press_key(key_id):
+    pressed_keys.add(key_id)
+    return in_out_adapter.send_key(key_id, True)
 
 
-def release_key(vKey_id):
-    pressed_keys.remove(vKey_id)
-    return in_out_adapter.send_key(vKey_id, False)
+def release_key(key_id):
+    pressed_keys.remove(key_id)
+    return in_out_adapter.send_key(key_id, False)
 
 
 def release_unicode_key(unicode_id):
@@ -30,16 +30,16 @@ def press_unicode_key(unicode_id):
     return in_out_adapter.send_unicode_key(unicode_id, True)
 
 
-def type_key(vKey_id):
-    print('---Typed {}'.format(vKey_id))
-    press_key(vKey_id)
-    release_key(vKey_id)
+def type_key(key_id):
+    print('---Typed {}'.format(key_id))
+    press_key(key_id)
+    release_key(key_id)
 
 
-def repress_key(vKey_id):
-    if vKey_id not in (1, 2, 4, 5, 6, 91):
+def repress_key(key_id):
+    if key_id not in (1, 2, 4, 5, 6, 91):
         # Mouse keys and left win key should not be repeated...
-        return in_out_adapter.send_key(vKey_id, True)
+        return in_out_adapter.send_key(key_id, True)
 
 
 # TODO: implement repress of unicode-keys
@@ -158,13 +158,13 @@ class KeyMap(object):
 
         # print('performing action')
         if isinstance(action, SimpleKey):
-            self.process_SimpleKey(action, key_down)
+            self.process_simple_key(action, key_down)
         elif isinstance(action, SimpleUnicodeKey):
-            self.process_SimpleUnicodeKey(action, key_down)
+            self.process_simple_unicode_key(action, key_down)
         elif isinstance(action, SimpleModifier):
-            self.process_SimpleMod(action, key_down)
+            self.process_simple_mod(action, key_down)
         elif isinstance(action, ComplexKey):
-            self.process_ComplexKey(action, key_down)
+            self.process_complex_key(action, key_down)
 
     def release_delayed_keys(self):
 
@@ -179,13 +179,13 @@ class KeyMap(object):
                 break
             elif isinstance(action, SimpleKey):
                 self.physically_pressed_keys[key] = action
-                self.process_SimpleKey(action, True)
+                self.process_simple_key(action, True)
             elif isinstance(action, SimpleUnicodeKey):
                 self.physically_pressed_keys[key] = action
-                self.process_SimpleUnicodeKey(action, True)
+                self.process_simple_unicode_key(action, True)
             elif isinstance(action, SimpleModifier):
                 self.physically_pressed_keys[key] = action
-                self.process_SimpleMod(action, True)
+                self.process_simple_mod(action, True)
             self.delayed_keys.pop(0)
 
     def set_layer(self, new_layer):
@@ -197,12 +197,13 @@ class KeyMap(object):
             action = self.physically_pressed_keys[key]
             if isinstance(action, SimpleKey):
                 release_key(int(action.vKeyName))
+                # TODO What about unicode here
             self.ignore_key_release.add(key)
         self.physically_pressed_keys = {}
         self.layer = self.init_layer
         logging.info('New Layer: '+self.init_layer.name)
 
-    def process_SimpleKey(self, action, key_down):
+    def process_simple_key(self, action, key_down):
         if key_down:
             # print('Key {} down'.format(action.vKeyName))
             press_key(int(action.vKeyName))
@@ -210,7 +211,7 @@ class KeyMap(object):
             # print('Key {} up'.format(action.vKeyName))
             release_key(int(action.vKeyName))
 
-    def process_SimpleUnicodeKey(self, action, key_down):
+    def process_simple_unicode_key(self, action, key_down):
         if key_down:
             # print('UnicodeKey {} down'.format(action.id))
             press_unicode_key(action.id)
@@ -218,13 +219,13 @@ class KeyMap(object):
             # print('UnicodeKey {} up'.format(action.id))
             release_unicode_key(action.id)
 
-    def process_SimpleMod(self, action, key_down):
+    def process_simple_mod(self, action, key_down):
         if key_down:
             self.set_layer(action.newLayer)
         else:
             self.release_layer()
 
-    def process_ComplexKey(self, action, key_down):
+    def process_complex_key(self, action, key_down):
         if key_down:
             self.pressed_time[int(action.vKeyName)] = time.time()
             self.delayed_keys.append(int(action.vKeyName))
