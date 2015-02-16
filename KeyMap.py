@@ -27,20 +27,16 @@ class KeyMap(object):
         self.pressed_keys = set()
 
     def process_keystroke(self, vkey_id, key_down):
-        print(
-            '---{}-----------{}-----------------------------------------'.format(Constants.key_id_to_name.get(vkey_id),
-                                                                                 key_down))
         # if the key had been released because of a layer change, the corresponding physical key release should be
         # ignored.
         if not key_down and vkey_id in self.ignore_key_release:
             self.ignore_key_release.remove(vkey_id)
-            print('ignore')
+            logging.debug("Physical key release of {0} ignored.".format(Constants.key_id_to_name.get(vkey_id)))
             return
 
         # are there keys in self.delayed_keys? if yes, there is a ComplexKey at self.delayed_keys[0] and its not
         # clear if this key is used as a modifier or as a key
         if len(self.delayed_keys) > 0:
-            print('delayed keys!')
             if key_down:
                 # when a key is pressed in this state, its action is not clear and it must be delayed until the layer
                 # is clear
@@ -51,7 +47,6 @@ class KeyMap(object):
                 # a key was released. This can have one of the following meanings:
                 # 1. the ComplexKey that is the first item of self.delayed_keys has been released
                 if self.delayed_keys[0] == vkey_id:
-                    print('case 1')
                     # this means that the ComplexKey was used as a key and not as a modifier
                     action = self.layer[vkey_id]
 
@@ -67,7 +62,6 @@ class KeyMap(object):
 
                 # 2. a key in self.delayed_keys has been released
                 elif vkey_id in self.delayed_keys:
-                    print('case 2')
                     # this means that the ComplexKey is used as a modifier
 
                     # change the layer
@@ -85,7 +79,6 @@ class KeyMap(object):
                 # 3. released key is not in delayed_keys. this means that the key had been pressed before the first
                 # ComplexKey in delayed_keys was pressed.
                 else:
-                    print('case 3')
                     # simply release that key
 
                     # this key can be a SimpleKey, a SimpleModifier or a ComplexKey which is used as a modifier.
@@ -110,7 +103,8 @@ class KeyMap(object):
 
         # key is not defined in the current layer
         if (vkey_id not in self.layer and key_down) or (vkey_id not in self.physically_pressed_keys and not key_down):
-            print('undefined Keystroke {}'.format(Constants.key_id_to_name.get(vkey_id)))
+            logging.warning('Keystroke {0} not defined on layer {1}.'.format(Constants.key_id_to_name.get(vkey_id),
+                            self.layer.name))
             return
 
         # bei released die action aus self.physically_pressed_keys nehmen
@@ -124,7 +118,6 @@ class KeyMap(object):
 
             del self.physically_pressed_keys[vkey_id]
 
-        # print('performing action')
         if isinstance(action, SimpleKey):
             self.process_simple_key(action, key_down)
         elif isinstance(action, SimpleUnicodeKey):
@@ -209,8 +202,6 @@ class KeyMap(object):
                 # release other keys in self.delayed_keys
                 self.release_delayed_keys()
 
-                print "long press!"
-
         pressed = frozenset(self.pressed_keys)
         all_pressed = set()
         all_pressed = all_pressed.union(pressed)
@@ -242,7 +233,6 @@ class KeyMap(object):
         self.in_out_adapter.send_unicode_key(unicode_id, True)
 
     def type_key(self, key_id):
-        print('---Typed {}'.format(key_id))
         self.press_key(key_id)
         self.release_key(key_id)
 
