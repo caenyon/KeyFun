@@ -2,52 +2,16 @@ import time
 import logging
 
 import Constants
-from InOut.InOutAdapter import InOutAdapter
+from InOut import InOutAdapter
 from Key import SimpleKey, SimpleModifier, ComplexKey, SimpleUnicodeKey
 
 
 __author__ = 'Felix'
 
-pressed_keys = set()
-in_out_adapter = InOutAdapter()
-
-
-def press_key(key_id):
-    pressed_keys.add(key_id)
-    return in_out_adapter.send_key(key_id, True)
-
-
-def release_key(key_id):
-    pressed_keys.remove(key_id)
-    return in_out_adapter.send_key(key_id, False)
-
-
-def release_unicode_key(unicode_id):
-    return in_out_adapter.send_unicode_key(unicode_id, False)
-
-
-def press_unicode_key(unicode_id):
-    return in_out_adapter.send_unicode_key(unicode_id, True)
-
-
-def type_key(key_id):
-    print('---Typed {}'.format(key_id))
-    press_key(key_id)
-    release_key(key_id)
-
-
-def repress_key(key_id):
-    if key_id not in (1, 2, 4, 5, 6, 91):
-        # Mouse keys and left win key should not be repeated...
-        return in_out_adapter.send_key(key_id, True)
-
-
-# TODO: implement repress of unicode-keys
-
 
 # noinspection PyMethodMayBeStatic
 class KeyMap(object):
-    def __init__(self, init_layer):
+    def __init__(self, init_layer, exit_key):
         self.init_layer = init_layer
         self.layer = init_layer
         self.delayed_keys = []
@@ -58,6 +22,9 @@ class KeyMap(object):
         self.key_repeat_delay = 0.03
         self.key_init_repeat_delay = 0.2
         self.last_pressed = {}
+
+        self.in_out_adapter = InOutAdapter.InOutAdapter(self.process_keystroke, exit_key)
+        self.pressed_keys = set()
 
     def process_keystroke(self, vkey_id, key_down):
         print(
@@ -89,7 +56,7 @@ class KeyMap(object):
                     action = self.layer[vkey_id]
 
                     # type the key associated with the ComplexKey
-                    type_key(int(action.vKeyName))
+                    self.type_key(int(action.vKeyName))
                     # TODO: what about unicode here?
 
                     # remove the ComplexKey from the list of delayed_keys
@@ -133,10 +100,10 @@ class KeyMap(object):
 
                     if isinstance(action, SimpleKey):
                         del self.physically_pressed_keys[int(action.vKeyName)]
-                        release_key(int(action.vKeyName))
+                        self.release_key(int(action.vKeyName))
                     elif isinstance(action, SimpleUnicodeKey):
                         del self.physically_pressed_keys[int(action.id)]
-                        release_unicode_key(action.id)
+                        self.release_unicode_key(action.id)
                     else:
                         self.release_layer()
             return
@@ -197,7 +164,7 @@ class KeyMap(object):
         for key in self.physically_pressed_keys:
             action = self.physically_pressed_keys[key]
             if isinstance(action, SimpleKey):
-                release_key(int(action.vKeyName))
+                self.release_key(int(action.vKeyName))
                 # TODO What about unicode here
             self.ignore_key_release.add(key)
         self.physically_pressed_keys = {}
@@ -206,19 +173,15 @@ class KeyMap(object):
 
     def process_simple_key(self, action, key_down):
         if key_down:
-            # print('Key {} down'.format(action.vKeyName))
-            press_key(int(action.vKeyName))
+            self.press_key(int(action.vKeyName))
         else:
-            # print('Key {} up'.format(action.vKeyName))
-            release_key(int(action.vKeyName))
+            self.release_key(int(action.vKeyName))
 
     def process_simple_unicode_key(self, action, key_down):
         if key_down:
-            # print('UnicodeKey {} down'.format(action.id))
-            press_unicode_key(action.id)
+            self.press_unicode_key(action.id)
         else:
-            # print('UnicodeKey {} up'.format(action.id))
-            release_unicode_key(action.id)
+            self.release_unicode_key(action.id)
 
     def process_simple_mod(self, action, key_down):
         if key_down:
@@ -248,7 +211,7 @@ class KeyMap(object):
 
                 print "long press!"
 
-        pressed = frozenset(pressed_keys)
+        pressed = frozenset(self.pressed_keys)
         all_pressed = set()
         all_pressed = all_pressed.union(pressed)
         for key in self.last_pressed:
@@ -259,7 +222,32 @@ class KeyMap(object):
                 self.last_pressed[key] = time.time() + self.key_init_repeat_delay
             elif key in pressed and key in self.last_pressed:
                 if time.time() - self.last_pressed[key] > self.key_repeat_delay:
-                    repress_key(key)
+                    self.repress_key(key)
                     self.last_pressed[key] = time.time()
             elif key not in pressed and key in self.last_pressed:
                 del self.last_pressed[key]
+
+    def press_key(self, key_id):
+        self.pressed_keys.add(key_id)
+        self.in_out_adapter.send_key(key_id, True)
+
+    def release_key(self, key_id):
+        self.pressed_keys.remove(key_id)
+        self.in_out_adapter.send_key(key_id, False)
+
+    def release_unicode_key(self, unicode_id):
+        self.in_out_adapter.send_unicode_key(unicode_id, False)
+
+    def press_unicode_key(self, unicode_id):
+        self.in_out_adapter.send_unicode_key(unicode_id, True)
+
+    def type_key(self, key_id):
+        print('---Typed {}'.format(key_id))
+        self.press_key(key_id)
+        self.release_key(key_id)
+
+    def repress_key(self, key_id):
+        # TODO: implement repress of unicode-keys
+        if key_id not in (1, 2, 4, 5, 6, 91):
+            # Mouse keys and left win key should not be repeated...
+            self.in_out_adapter.send_key(key_id, True)

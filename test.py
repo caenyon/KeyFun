@@ -1,7 +1,6 @@
 # coding=utf-8
 
 from Key import VirtualKey
-from InOut import InOutAdapter
 
 __author__ = 'Felix'
 
@@ -149,9 +148,6 @@ def_layer = Layer('layer_def')
 def_layer.add_default_keys()
 # def_layer.add_simple_unicode_key(VirtualKey("F"), "?")
 
-key_map = KeyMap(layer_1)
+key_map = KeyMap(layer_1, VirtualKey('SCROLL'))
 
-io_adapter = InOutAdapter.InOutAdapter()
-
-io_adapter.create_input_hook(key_map.process_keystroke, VirtualKey('SCROLL'))
-io_adapter.pump_messages(key_map.update, 0.001)
+key_map.in_out_adapter.run_hooks(key_map.update, 0.001)
