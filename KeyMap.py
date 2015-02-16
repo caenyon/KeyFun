@@ -60,8 +60,9 @@ class KeyMap(object):
         self.last_pressed = {}
 
     def process_keystroke(self, vkey_id, key_down):
-        print('---{}-----------{}-----------------------------------------'.format(Constants.id_to_vkey(vkey_id),
-                                                                                   key_down))
+        print(
+            '---{}-----------{}-----------------------------------------'.format(Constants.key_id_to_name.get(vkey_id),
+                                                                                 key_down))
         # if the key had been released because of a layer change, the corresponding physical key release should be
         # ignored.
         if not key_down and vkey_id in self.ignore_key_release:
@@ -142,7 +143,7 @@ class KeyMap(object):
 
         # key is not defined in the current layer
         if (vkey_id not in self.layer and key_down) or (vkey_id not in self.physically_pressed_keys and not key_down):
-            print('undefined Keystroke {}'.format(Constants.id_to_vkey(vkey_id)))
+            print('undefined Keystroke {}'.format(Constants.key_id_to_name.get(vkey_id)))
             return
 
         # bei released die action aus self.physically_pressed_keys nehmen
@@ -189,7 +190,7 @@ class KeyMap(object):
             self.delayed_keys.pop(0)
 
     def set_layer(self, new_layer):
-        logging.info('New Layer: '+new_layer.name)
+        logging.info('New Layer: ' + new_layer.name)
         self.layer = new_layer
 
     def release_layer(self):
@@ -201,7 +202,7 @@ class KeyMap(object):
             self.ignore_key_release.add(key)
         self.physically_pressed_keys = {}
         self.layer = self.init_layer
-        logging.info('New Layer: '+self.init_layer.name)
+        logging.info('New Layer: ' + self.init_layer.name)
 
     def process_simple_key(self, action, key_down):
         if key_down:

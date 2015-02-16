@@ -32,5 +32,5 @@ class Layer(object):
         self.layerDict[int(vKey_physical)] = ComplexKey(vKey_target, layer_target)
 
     def add_default_keys(self):
-        for vKeyName in Constants.vk_to_id:
+        for vKeyName in Constants.key_name_to_id:
             self.add_SimpleKey(VirtualKey(vKeyName), VirtualKey(vKeyName))

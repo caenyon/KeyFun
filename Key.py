@@ -22,7 +22,7 @@ class ComplexKey(object):
 class VirtualKey(object):
     def __init__(self, i):
         if isinstance(i, int):
-            if i in Constants.id_to_vk:
+            if i in Constants.key_id_to_name:
                 self.id = i
             else:
                 raise AttributeError('Integer {} ({}) is not a valid virtual key ID.'.format(i, hex(i)))
@@ -30,18 +30,18 @@ class VirtualKey(object):
             if not i.startswith('VK_'):
                 i = 'VK_{0}'.format(i)
 
-            if i in Constants.vk_to_id:
-                self.id = Constants.vk_to_id[i]
+            if i in Constants.key_name_to_id:
+                self.id = Constants.key_name_to_id[i]
             else:
                 raise AttributeError('String {} is not a valid virtual key name.'.format(i))
         else:
             raise AttributeError('Key has to be int or str.')
 
     def __str__(self):
-        return Constants.id_to_vkey(self.id)
+        return Constants.key_id_to_name.get(self.id)
 
     def __repr__(self):
-        return '<Virtual Key "{}" ({})>'.format(Constants.id_to_vkey(self.id), hex(self.id))
+        return '<Virtual Key "{}" ({})>'.format(Constants.key_id_to_name.get(self.id), hex(self.id))
 
     def __int__(self):
         return self.id
