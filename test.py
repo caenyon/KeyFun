@@ -140,7 +140,7 @@ layer_1.add_simple_unicode_key(VirtualKey("CAPITAL"), 0x00DF)
 
 layer_1.add_complex_key(VirtualKey("SPACE"), VirtualKey("SPACE"), layer_3)
 layer_1.add_simple_mod(VirtualKey("OEM_102"), layer_4)
-layer_1.add_simple_mod(VirtualKey("OEM_MINUS"), layer_4)
+# layer_1.add_simple_mod(VirtualKey("OEM_MINUS"), layer_4)
 
 layer_1.add_simple_key(VirtualKey("NRETURN"), VirtualKey("NRETURN"))
 

@@ -11,7 +11,7 @@ MOUSE_CODES = {0x0200: "WM_MOUSEMOVE", 0x0201: "WM_LBUTTONDOWN", 0x0202: "WM_LBU
 
 
 class Hook:
-    def __init__(self, process_keystroke_func, triggered_events, exit_key):
+    def __init__(self, process_keystroke_func, triggered_events, exit_key, print_status_func):
         self.physically_pressed_keys = set()
         self.process_keystroke_func = process_keystroke_func
         self.triggered_events = triggered_events
@@ -19,6 +19,7 @@ class Hook:
         self.exit_event = threading.Event()
         self.hook_manager = pyHook.HookManager()
         self.hook_manager.KeyAll = self._handle_keyboard_all
+        self.print_status_func = print_status_func
 
     def run(self, update_func, pump_messages_delay):
         self.exit_event.clear()
@@ -86,9 +87,15 @@ class Hook:
         """
         key_down = (event.IsTransition() == 0)
 
+        # For debugging: Print status if PAUSE key is pressed
+        if event.KeyID == 0x13 and key_down:
+            self._print_status()
+            return False
+
         # Set the exit event when the exit_key is pressed
         if int(self.exit_key) == event.KeyID and key_down:
             self.exit_event.set()
+            return False
 
         # Workaround: Sending ALT-TAB does not work in Win 8 because of new security mechanisms. Generating key presses
         # always leads to keyboard events where the injected bit is set and Windows 8 ignores Alt-Tab if this bit is
@@ -133,3 +140,10 @@ class Hook:
             self.process_keystroke_func(key_id, key_down)
 
         return False
+
+    def _print_status(self):
+        print("-" * 80)
+        print("Physically pressed keys: {}".format(self.physically_pressed_keys))
+        print("Triggered events: {}".format(", ".join(self.triggered_events)))
+        self.print_status_func()
+        print("-" * 80)

@@ -1,18 +1,20 @@
+import Constants
 from InOut import Send, Hook
 
 __author__ = 'Felix'
 
 
 class InOutAdapter(object):
-    def __init__(self, process_keystroke_func, exit_key):
+    def __init__(self, process_keystroke_func, exit_key, print_status_func):
         self.triggered_events = []
         self.process_keystroke_func = process_keystroke_func
-        self.hook = Hook.Hook(process_keystroke_func, self.triggered_events, exit_key)
+        self.hook = Hook.Hook(process_keystroke_func, self.triggered_events, exit_key, print_status_func)
 
     def run_hooks(self, update_func, delay):
         self.hook.run(update_func, delay)
 
     def send_key(self, key_id, down):
+        print "Sending {0} {1}".format(Constants.key_id_to_name.get(key_id), "down" if down else "up")
         if key_id in (1, 2, 4, 5, 6):
             self.send_mouse_key(key_id, down)
         else:
@@ -40,5 +42,6 @@ class InOutAdapter(object):
 
     # noinspection PyMethodMayBeStatic
     def send_unicode_key(self, unicode_id, down):
+        print "Sending {0} {1}".format(hex(unicode_id), "down" if down else "up")
         Send.send_keyboard_input(unicode_id, down, unicode_key=True)
 
