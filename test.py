@@ -153,17 +153,17 @@ key_map = KeyMap(layer_1, VirtualKey('SCROLL'))
 
 
 def close(sysTrayIcon):
-    import sys
-    sys.exit(0)
+    key_map.in_out_adapter.hook.exit_event.set()
 
 
 def do_nothing(sysTrayIcon):
-    pass
+    print("test")
+
 
 menu_options = (('Pause', None, do_nothing),
                 ('A sub-menu', None, (('Option 1', None, do_nothing),
                                       ('Option 2', None, do_nothing),)))
 
 sti = SysTrayIcon('resources/keyboard.ico', 'KeyFun', menu_options, on_quit=close)
-
+print("start")
 key_map.in_out_adapter.run_hooks(key_map.update, 0.001)

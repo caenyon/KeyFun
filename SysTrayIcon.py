@@ -9,8 +9,11 @@
 
 import os
 import win32api
+
 import win32con
 import win32gui_struct
+
+
 try:
     import winxpgui as win32gui
 except ImportError:
@@ -54,7 +57,7 @@ class SysTrayIcon(object):
         window_class = win32gui.WNDCLASS()
         hinst = window_class.hInstance = win32gui.GetModuleHandle(None)
         window_class.lpszClassName = self.window_class_name
-        window_class.style = win32con.CS_VREDRAW | win32con.CS_HREDRAW;
+        window_class.style = win32con.CS_VREDRAW | win32con.CS_HREDRAW
         window_class.hCursor = win32gui.LoadCursor(0, win32con.IDC_ARROW)
         window_class.hbrBackground = win32con.COLOR_WINDOW
         window_class.lpfnWndProc = message_map # could also specify a wndproc.
@@ -76,7 +79,7 @@ class SysTrayIcon(object):
         self.notify_id = None
         self.refresh_icon()
 
-        win32gui.PumpMessages()
+        # win32gui.PumpMessages()
 
     def _add_ids_to_menu_options(self, menu_options):
         result = []
@@ -209,6 +212,7 @@ class SysTrayIcon(object):
             win32gui.DestroyWindow(self.hwnd)
         else:
             menu_action(self)
+
 
 def non_string_iterable(obj):
     try:
