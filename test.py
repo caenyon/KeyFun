@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from Key import VirtualKey
+from SysTrayIcon import SysTrayIcon
 
 __author__ = 'Felix'
 
@@ -149,5 +150,20 @@ def_layer.add_default_keys()
 # def_layer.add_simple_unicode_key(VirtualKey("F"), "?")
 
 key_map = KeyMap(layer_1, VirtualKey('SCROLL'))
+
+
+def close(sysTrayIcon):
+    import sys
+    sys.exit(0)
+
+
+def do_nothing(sysTrayIcon):
+    pass
+
+menu_options = (('Pause', None, do_nothing),
+                ('A sub-menu', None, (('Option 1', None, do_nothing),
+                                      ('Option 2', None, do_nothing),)))
+
+sti = SysTrayIcon('resources/keyboard.ico', 'KeyFun', menu_options, on_quit=close)
 
 key_map.in_out_adapter.run_hooks(key_map.update, 0.001)
