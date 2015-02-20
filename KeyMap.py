@@ -23,10 +23,11 @@ class KeyMap(object):
         self.key_init_repeat_delay = 0.2
         self.last_pressed = {}
 
-        self.in_out_adapter = InOutAdapter.InOutAdapter(self.process_keystroke, exit_key)
+        self.in_out_adapter = InOutAdapter.InOutAdapter(self.process_keystroke, exit_key, self.print_status)
         self.pressed_keys = set()
 
     def process_keystroke(self, vkey_id, key_down):
+        print "Physical {0} {1}".format(Constants.key_id_to_name.get(vkey_id), "down" if key_down else "up")
         # if the key had been released because of a layer change, the corresponding physical key release should be
         # ignored.
         if not key_down and vkey_id in self.ignore_key_release:
@@ -241,3 +242,10 @@ class KeyMap(object):
         if key_id not in (1, 2, 4, 5, 6, 91):
             # Mouse keys and left win key should not be repeated...
             self.in_out_adapter.send_key(key_id, True)
+
+    def print_status(self):
+        print("Layer: {}".format(self.layer.name))
+        print("Delayed keys: {}".format(self.delayed_keys))
+        print("Ignore key release: {}".format(self.ignore_key_release))
+        print("Physically pressed keys: {}".format(self.physically_pressed_keys))
+        print("Pressed keys: {}".format(self.pressed_keys))
